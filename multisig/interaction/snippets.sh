@@ -7,6 +7,10 @@
 ALICE="./wallets/alice.pem"
 BOB="./wallets/bob.pem"
 
+SHARD0="./walletsRelay/shard0.pem"
+SHARD1="./walletsRelay/shard1.pem"
+SHARD2="./walletsRelay/shard2.pem"
+
 ADDRESS=$(erdpy data load --key=address-testnet-multisig) #erd1qqqqqqqqqqqqqpgqja2a8gweqzhead3gncmzgc8k7g370yvsd8ssxefhur
 DEPLOY_TRANSACTION=$(erdpy data load --key=deployTransaction-testnet)
 
@@ -20,6 +24,8 @@ ESDT_ISSUE_COST_DECIMAL=50000000000000000
 # Addresses in Hex
 BOB_ADDRESS=0x8049d639e5a6980d1cd2392abcce41029cda74a1563523a202f09641cc2618f8 #erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx
 RELAYER_ADDR=0x1e8a8b6b49de5b7be10aaa158a5a6a4abb4b56cc08f524bb5e6cd5f211ad3e13 #erd1r69gk66fmedhhcg24g2c5kn2f2a5k4kvpr6jfw67dn2lyydd8cfswy6ede
+RELAYER_Shard0=0x61b822a6fff53c0a1eea1ede286582f80c34e24ca01a63133f5d8d1049050b3c #erd1vxuz9fhl757q58h2rm0zsevzlqxrfcjv5qdxxyeltkx3qjg9pv7qf044q4
+RELAYER_Shard2=0x4e6d4c391108d8f6793d705f4b50a7841866c382998eaea23887c65bc1fe13ba #erd1fek5cwg3prv0v7fawp05k598ssvxdsuznx82ag3cslr9hs07zwaqtw7l3l
 
 ESDT_SYSTEM_SC_ADDRESS=erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u
 
@@ -74,8 +80,18 @@ deployChildContracts() {
 stake() {
     local RELAYER_REQUIRED_STAKE_DECIMAL=1
 
-    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${BOB} \
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${SHARD2} \
     --gas-limit=35000000 --function="stake" --value=${RELAYER_REQUIRED_STAKE_DECIMAL} \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
+stake
+
+addBoardMember() {
+    local RELAYER_REQUIRED_STAKE_DECIMAL=1
+
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
+    --gas-limit=35000000 --function="addBoardMember" \
+    --arguments ${RELAYER_Shard2} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
@@ -87,11 +103,11 @@ unstake() {
 }
 
 addMapping() {
-    local ERC20_ADDRESS=0x4273ea990661d5840B33090d080710c1177D68Ea
+    local ERC20_ADDRESS=0x4Be91B77CDf9607671c06Af1462883a9e424CaA4
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
     --gas-limit=35000000 --function="addMapping" \
-    --arguments ${ERC20_ADDRESS} ${WRAPPED_ETH_TOKEN_ID} \
+    --arguments ${ERC20_ADDRESS} ${WRAPPED_EGLD_TOKEN_ID} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
@@ -213,7 +229,7 @@ transferEsdt() {
 
 getNextTransactionBatch() {
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${BOB} \
-    --gas-limit=25000000 --function="getNextTransactionBatch" \
+    --gas-limit=100000000 --function="getNextTransactionBatch" \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
@@ -270,6 +286,11 @@ getEgldEsdtSwapAddress() {
 
     EGLD_ESDT_SWAP_ADDRESS=${ADDRESS_BECH32}
     echo "EgldEsdtSwap address: ${EGLD_ESDT_SWAP_ADDRESS}"
+}
+
+getCurrentBatch() {
+    local QUERY_OUTPUT=$(erdpy --verbose contract query ${ADDRESS} --function="getCurrentTxBatch" --proxy=${PROXY})
+    echo "getCurrentBatch : ${QUERY_OUTPUT}"
 }
 
 getEsdtSafeAddress() {
@@ -351,5 +372,26 @@ bech32ToHex() {
     echo ${1}
     ADDRESS_HEX=$(erdpy wallet bech32 --decode $1)
 }
-
-addMapping
+getWrappedEgldTokenIdentifier() {
+    local QUERY_OUTPUT=$(erdpy --verbose contract query erd1qqqqqqqqqqqqqpgqmfjtewxwg5cr2uqzcsw8u75qdgclhtfkd8sstw8u24 --function="getWrappedEgldTokenId" --proxy=${PROXY})
+    TOKEN_IDENTIFIER=0x$(jq -r '.[0] .hex' <<< "${QUERY_OUTPUT}")
+    echo ${QUERY_OUTPUT}
+    echo "Wrapped eGLD token identifier: ${TOKEN_IDENTIFIER}"
+}
+wrapEgldBob() {
+    erdpy --verbose contract call erd1qqqqqqqqqqqqqpgqmfjtewxwg5cr2uqzcsw8u75qdgclhtfkd8sstw8u24 --recall-nonce --pem=${BOB} \
+    --gas-limit=10000000 --value=10000000000000000000 --function="wrapEgld" \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
+createTransaction() {
+    local CREATE_TRANSACTION_ENDPOINT=0x6372656174655472616e73616374696f6e # "createTransaction"
+    local DEST_ADDRESS=0x7f68b02deD630955893262742a69583ED3315E29
+    local VALUE=0x8AC7230489E80000
+    getEsdtSafeAddress
+    bech32ToHex ${ESDT_SAFE_ADDRESS}
+     
+    erdpy --verbose contract call ${ADDRESS_HEX} --recall-nonce --pem=${BOB} \
+    --gas-limit=50000000 --function="ESDTTransfer" \
+    --arguments ${WRAPPED_EGLD_TOKEN_ID} ${VALUE} ${CREATE_TRANSACTION_ENDPOINT} ${DEST_ADDRESS} \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
