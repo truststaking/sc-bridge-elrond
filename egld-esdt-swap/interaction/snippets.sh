@@ -1,9 +1,9 @@
 ALICE="/home/elrond/elrond-sdk/erdpy/testnet/wallets/users/alice.pem"
 BOB="/home/elrond/elrond-sdk/erdpy/testnet/wallets/users/bob.pem"
-ADDRESS=$(erdpy data load --key=address-testnet-egld-esdt-swap)
+ADDRESS=erd1qqqqqqqqqqqqqpgq9r07xvygjpyfzl0yrehy68crezvu9ftqd8sstu9c58
 DEPLOY_TRANSACTION=$(erdpy data load --key=deployTransaction-testnet)
-PROXY=https://testnet-gateway.elrond.com
-CHAIN_ID=T
+PROXY=https://devnet-gateway.elrond.com
+CHAIN_ID=D
 
 ESDT_SYSTEM_SC_ADDRESS=erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u
 
@@ -58,7 +58,7 @@ setLocalRoles() {
     --arguments ${WRAPPED_EGLD_TOKEN_ID} ${ADDRESS_HEX} ${LOCAL_MINT_ROLE} ${LOCAL_BURN_ROLE} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
-
+setLocalRoles
 wrapEgldBob() {
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${BOB} \
     --gas-limit=10000000 --value=1000 --function="wrapEgld" \
@@ -81,6 +81,7 @@ unwrapEgldBob() {
 getWrappedEgldTokenIdentifier() {
     local QUERY_OUTPUT=$(erdpy --verbose contract query ${ADDRESS} --function="getWrappedEgldTokenId" --proxy=${PROXY})
     TOKEN_IDENTIFIER=0x$(jq -r '.[0] .hex' <<< "${QUERY_OUTPUT}")
+    echo ${QUERY_OUTPUT}
     echo "Wrapped eGLD token identifier: ${TOKEN_IDENTIFIER}"
 }
 
