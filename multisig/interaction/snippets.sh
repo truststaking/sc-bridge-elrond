@@ -84,6 +84,16 @@ stake() {
     --gas-limit=35000000 --function="stake" --value=${RELAYER_REQUIRED_STAKE_DECIMAL} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
+stake
+
+addBoardMember() {
+    local RELAYER_REQUIRED_STAKE_DECIMAL=1
+
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
+    --gas-limit=35000000 --function="addBoardMember" \
+    --arguments ${RELAYER_Shard2} \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
 
 addBoardMember() {
     local RELAYER_REQUIRED_STAKE_DECIMAL=1
@@ -102,7 +112,7 @@ unstake() {
 }
 
 addMapping() {
-    local ERC20_ADDRESS=0xFeFaFf2fE23819Ad225228eF3429fb1DA4ecA805
+    local ERC20_ADDRESS=0x4Be91B77CDf9607671c06Af1462883a9e424CaA4
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
     --gas-limit=35000000 --function="addMapping" \
