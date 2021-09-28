@@ -7,11 +7,7 @@
 ALICE="./wallets/alice.pem"
 BOB="./wallets/bob.pem"
 
-SHARD0="./walletsRelay/shard0.pem"
-SHARD1="./walletsRelay/shard1.pem"
-SHARD2="./walletsRelay/shard2.pem"
-
-ADDRESS=$(erdpy data load --key=address-testnet-multisig) #erd1qqqqqqqqqqqqqpgqja2a8gweqzhead3gncmzgc8k7g370yvsd8ssxefhur
+ADDRESS=erd1qqqqqqqqqqqqqpgq5300tayry6ardyw66azx3tljp3uhl8jq082sluzkm4
 DEPLOY_TRANSACTION=$(erdpy data load --key=deployTransaction-testnet)
 
 PROXY=https://devnet-gateway.elrond.com
@@ -22,28 +18,30 @@ ESDT_ISSUE_COST=0xB1A2BC2EC50000 # 0.05 eGLD
 ESDT_ISSUE_COST_DECIMAL=50000000000000000
 
 # Addresses in Hex
-BOB_ADDRESS=0x8049d639e5a6980d1cd2392abcce41029cda74a1563523a202f09641cc2618f8 #erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx
-RELAYER_ADDR=0x1e8a8b6b49de5b7be10aaa158a5a6a4abb4b56cc08f524bb5e6cd5f211ad3e13 #erd1r69gk66fmedhhcg24g2c5kn2f2a5k4kvpr6jfw67dn2lyydd8cfswy6ede
-RELAYER_Shard0=0x61b822a6fff53c0a1eea1ede286582f80c34e24ca01a63133f5d8d1049050b3c #erd1vxuz9fhl757q58h2rm0zsevzlqxrfcjv5qdxxyeltkx3qjg9pv7qf044q4
-RELAYER_Shard2=0x4e6d4c391108d8f6793d705f4b50a7841866c382998eaea23887c65bc1fe13ba #erd1fek5cwg3prv0v7fawp05k598ssvxdsuznx82ag3cslr9hs07zwaqtw7l3l
+BOB_ADDRESS=0x
+
+RELAYER_ADDR_1=0x1832cec1c79f80ba75e51d9f1e05a7691b802299d30ea803a5ece42395658f89
+RELAYER_ADDR_2=0xa02c0f0ec7cddf4cb6cd80a7a210e3c3b5905d692bbb6f5deea8c0f2c93b92ca
+RELAYER_ADDR_3=0x5c0601a6949cca981207aaf1accb44d4b7ac1bef74f5d0e33a36c0efdff647ae
 
 ESDT_SYSTEM_SC_ADDRESS=erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u
 
 # Setup and aggregator first, then put its address hex-encoded in this variable
 AGGREGATOR_ADDRESS=0x0000000000000000050081d0b65d6bd5bd7d5af6df1a26e89513c6f38cd5e3df #erd1qqqqqqqqqqqqqpgqs8gtvhtt6k7h6khkmudzd6y4z0r08rx4u00svnnxt2
 
-#########################################################################
-################## Update after issueing the tokens #####################
-#########################################################################
-WRAPPED_EGLD_TOKEN_ID=0x45474c442d626131636665
-WRAPPED_ETH_TOKEN_ID=0x4554482d356335643064
-PROJECT="../"
+########################################################################
+################## Update after issuing the tokens #####################
+########################################################################
+WRAPPED_EGLD_TOKEN_ID=0x45474c442d316138626639
+WRAPPED_ETH_TOKEN_ID=0x4554482d353063336133
+
 deploy() {
     echo "test"
     local SLASH_AMOUNT=0x0a # 1
     erdpy --verbose contract deploy --project=${PROJECT} --recall-nonce --pem=${ALICE} \
     --gas-limit=400000000 \
-    --arguments ${RELAYER_REQUIRED_STAKE} ${SLASH_AMOUNT} 0x01 ${BOB_ADDRESS} ${RELAYER_ADDR} \
+    --arguments ${RELAYER_REQUIRED_STAKE} ${SLASH_AMOUNT} 0x02 \
+    ${RELAYER_ADDR_1} ${RELAYER_ADDR_2} ${RELAYER_ADDR_3} \
     --send --outfile="deploy-testnet.interaction.json" --proxy=${PROXY} --chain=${CHAIN_ID} || return
 
     TRANSACTION=$(erdpy data parse --file="./deploy-testnet.interaction.json" --expression="data['emitted_tx']['hash']")
@@ -112,11 +110,28 @@ unstake() {
 }
 
 addMapping() {
-    local ERC20_ADDRESS=0x4Be91B77CDf9607671c06Af1462883a9e424CaA4
+    local WRAPPED_EGLD_ERC20=0xC06606b0248F56aA93DB3236dB0bED97B9Ad1135
+    local WRAPPED_ETH_ERC20=0x1F3ff2dA93DB23be6F73696950701F5cE471D7d4
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
-    --gas-limit=35000000 --function="addMapping" \
-    --arguments ${ERC20_ADDRESS} ${WRAPPED_EGLD_TOKEN_ID} \
+    --gas-limit=40000000 --function="addMapping" \
+    --arguments ${WRAPPED_EGLD_ERC20} ${WRAPPED_EGLD_TOKEN_ID} \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+
+    sleep 10
+
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
+    --gas-limit=40000000 --function="addMapping" \
+    --arguments ${WRAPPED_ETH_ERC20} ${WRAPPED_ETH_TOKEN_ID} \
+    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
+
+changeQuorum() {
+    local NEW_QUORUM=0x02
+
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
+    --gas-limit=40000000 --function="changeQuorum" \
+    --arguments ${NEW_QUORUM} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
