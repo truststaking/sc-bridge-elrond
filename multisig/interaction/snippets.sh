@@ -266,9 +266,9 @@ transferEsdt() {
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
-getNextTransactionBatch() {
+fetchNextTransactionBatch() {
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${BOB} \
-    --gas-limit=100000000 --function="getNextTransactionBatch" \
+    --gas-limit=25000000 --function="fetchNextTransactionBatch" \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
@@ -387,6 +387,10 @@ manualQuery() {
     --gas-limit=50000000 --function="latestPriceFeedOptional" \
     --arguments 0x47574549 0x45474c44 \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
+}
+
+getCurrentBatch() {
+    erdpy --verbose contract query ${ADDRESS} --function="getCurrentTxBatch" --proxy=${PROXY}
 }
 
 # helpers
