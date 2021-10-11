@@ -7,7 +7,18 @@
 ALICE="./wallets/alice.pem"
 BOB="./wallets/bob.pem"
 
-ADDRESS=erd1qqqqqqqqqqqqqpgq5300tayry6ardyw66azx3tljp3uhl8jq082sluzkm4
+SHARD0="./walletsRelay/walletKey0.pem"
+SHARD1="./walletsRelay/walletKey1.pem"
+SHARD2="./walletsRelay/walletKey2.pem"
+SHARD3="./walletsRelay/walletKey3.pem"
+SHARD4="./walletsRelay/walletKey4.pem"
+SHARD5="./walletsRelay/walletKey5.pem"
+SHARD6="./walletsRelay/walletKey6.pem"
+SHARD7="./walletsRelay/walletKey7.pem"
+SHARD8="./walletsRelay/walletKey8.pem"
+SHARD9="./walletsRelay/walletKey9.pem"
+
+ADDRESS=$(erdpy data load --key=address-testnet-multisig) #erd1qqqqqqqqqqqqqpgqja2a8gweqzhead3gncmzgc8k7g370yvsd8ssxefhur
 DEPLOY_TRANSACTION=$(erdpy data load --key=deployTransaction-testnet)
 
 PROXY=https://devnet-gateway.elrond.com
@@ -18,30 +29,35 @@ ESDT_ISSUE_COST=0xB1A2BC2EC50000 # 0.05 eGLD
 ESDT_ISSUE_COST_DECIMAL=50000000000000000
 
 # Addresses in Hex
-BOB_ADDRESS=0x
-
-RELAYER_ADDR_1=0x1832cec1c79f80ba75e51d9f1e05a7691b802299d30ea803a5ece42395658f89
-RELAYER_ADDR_2=0xa02c0f0ec7cddf4cb6cd80a7a210e3c3b5905d692bbb6f5deea8c0f2c93b92ca
-RELAYER_ADDR_3=0x5c0601a6949cca981207aaf1accb44d4b7ac1bef74f5d0e33a36c0efdff647ae
+BOB_ADDRESS=0x8049d639e5a6980d1cd2392abcce41029cda74a1563523a202f09641cc2618f8 #erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx
+RELAYER_Shard0=0x7ae98777615241f87c97c2c4dcae2c70e20c8ad6b18a82459fe483e2682fa4e5 #erd10t5cwamp2fqlslyhctzdet3vwr3qezkkkx9gy3vlujp7y6p05njsl8npv9
+RELAYER_Shard1=0x53490a678ea9cccfe6c803a75af670a3026f2e9ed373f1e4e771f170014f5d53 #erd12dys5euw48xvlekgqwn44ans5vpx7t576delre88w8chqq20t4fs3njzv6
+RELAYER_Shard2=0x26e3269a51bac82cc458c2059a002260ab46bda8f8182b73a6ec645fb7694b97 #erd1ym3jdxj3htyze3zccgze5qpzvz45d0dglqvzkuaxa3j9ldmffwts3hsaj0
+RELAYER_Shard3=0xc7e98c4ca730f80240e7e5ef8c387607f85685130389705b528800d586770c0d #erd1cl5ccn98xruqys88uhhccwrkqlu9dpgnqwyhqk6j3qqdtpnhpsxsad3dxd
+RELAYER_Shard4=0x522279c5aed5b49a2a6d8ebef5d1f79d03c96f4fe70296e1605bd8ccd91d2010 #erd12g38n3dw6k6f52nd36l0t50hn5pujm60uupfdctqt0vvekgayqgq8pm7z8
+RELAYER_Shard5=0x6e19c24c9ada16cf03e616caf53958d5089ee57022d46e8faaac7cdca0c639a8 #erd1dcvuyny6mgtv7qlxzm902w2c65yfaetsyt2xara2437degxx8x5qpxssnh
+RELAYER_Shard6=0xd285e3bbaef774ec5ef8e9e9fe1236f95e16763ed1c6e47acfa93a6efdac2f20 #erd162z78waw7a6wchhca85luy3kl90pva3768rwg7k04yaxaldv9usq0tpf5y
+RELAYER_Shard7=0x546a03d52943d15d7913edc545b03e7ef70aca259cc88f1a916a57873e1b6518 #erd1234q84ffg0g467gnahz5tvp70mms4j39nnyg7x53dftcw0smv5vqs72j58
+RELAYER_Shard8=0x85c78a25accc17768168bc384787adadde105b8836d49b3d24189ef0e5f4a0f3 #erd1shrc5fdvesthdqtghsuy0pad4h0pqkugxm2fk0fyrz00pe055ress3adjq
+RELAYER_Shard9=0x5a83644fe1de271497cd5159615f60b212936532c71fb134eeaf9cf38f2f4d63 #erd1t2pkgnlpmcn3f97d29vkzhmqkgffxefjcu0mzd8w47w08re0f43sn9vtew
 
 ESDT_SYSTEM_SC_ADDRESS=erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u
 
 # Setup and aggregator first, then put its address hex-encoded in this variable
 AGGREGATOR_ADDRESS=0x0000000000000000050081d0b65d6bd5bd7d5af6df1a26e89513c6f38cd5e3df #erd1qqqqqqqqqqqqqpgqs8gtvhtt6k7h6khkmudzd6y4z0r08rx4u00svnnxt2
 
-########################################################################
-################## Update after issuing the tokens #####################
-########################################################################
-WRAPPED_EGLD_TOKEN_ID=0x45474c442d316138626639
-WRAPPED_ETH_TOKEN_ID=0x4554482d353063336133
-
+#########################################################################
+################## Update after issueing the tokens #####################
+#########################################################################
+WRAPPED_EGLD_TOKEN_ID=0x45474c442d373062663636
+WRAPPED_ETH_TOKEN_ID=0x4554482d363563323231
+PROJECT="../"
 deploy() {
     echo "test"
     local SLASH_AMOUNT=0x0a # 1
     erdpy --verbose contract deploy --project=${PROJECT} --recall-nonce --pem=${ALICE} \
     --gas-limit=400000000 \
-    --arguments ${RELAYER_REQUIRED_STAKE} ${SLASH_AMOUNT} 0x02 \
-    ${RELAYER_ADDR_1} ${RELAYER_ADDR_2} ${RELAYER_ADDR_3} \
+    --arguments ${RELAYER_REQUIRED_STAKE} ${SLASH_AMOUNT} 0x02 ${BOB_ADDRESS} ${RELAYER_Shard0} ${RELAYER_Shard1} ${RELAYER_Shard2} ${RELAYER_Shard3} ${RELAYER_Shard4} ${RELAYER_Shard5} ${RELAYER_Shard6} ${RELAYER_Shard7} ${RELAYER_Shard8} ${RELAYER_Shard9}\
     --send --outfile="deploy-testnet.interaction.json" --proxy=${PROXY} --chain=${CHAIN_ID} || return
 
     TRANSACTION=$(erdpy data parse --file="./deploy-testnet.interaction.json" --expression="data['emitted_tx']['hash']")
@@ -56,7 +72,7 @@ deploy() {
 
 upgrade() {
     erdpy --verbose contract upgrade ${ADDRESS} --project=${PROJECT} --recall-nonce --pem=${ALICE} \
-    --gas-limit=100000000 --send --outfile="upgrade.json" --proxy=${PROXY} --chain=${CHAIN_ID} || return
+    --gas-limit=1000000000 --send --outfile="upgrade.json" --proxy=${PROXY} --chain=${CHAIN_ID} || return
 }
 
 deployChildContracts() {
@@ -76,13 +92,12 @@ deployChildContracts() {
 }
 
 stake() {
-    local RELAYER_REQUIRED_STAKE_DECIMAL=1
+    local RELAYER_REQUIRED_STAKE_DECIMAL=1000
 
-    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${SHARD2} \
+    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${SHARD9} \
     --gas-limit=35000000 --function="stake" --value=${RELAYER_REQUIRED_STAKE_DECIMAL} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
-stake
 
 addBoardMember() {
     local RELAYER_REQUIRED_STAKE_DECIMAL=1
@@ -98,7 +113,7 @@ addBoardMember() {
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
     --gas-limit=35000000 --function="addBoardMember" \
-    --arguments ${RELAYER_Shard2} \
+    --arguments ${RELAYER_Shard5} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 
@@ -110,31 +125,31 @@ unstake() {
 }
 
 addMapping() {
-    local WRAPPED_EGLD_ERC20=0xC06606b0248F56aA93DB3236dB0bED97B9Ad1135
-    local WRAPPED_ETH_ERC20=0x1F3ff2dA93DB23be6F73696950701F5cE471D7d4
+    local WRAPPED_EGLD_ERC20=0x64a8bfab8e7ac5d5a3561d95b504542e9e29ce24
+    local WRAPPED_ETH_ERC20=0x4d75EF4411cda0E0C257383054Fe68febB993D37
 
-    erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
-    --gas-limit=40000000 --function="addMapping" \
-    --arguments ${WRAPPED_EGLD_ERC20} ${WRAPPED_EGLD_TOKEN_ID} \
-    --send --proxy=${PROXY} --chain=${CHAIN_ID}
+    # erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
+    # --gas-limit=40000000 --function="addMapping" \
+    # --arguments ${WRAPPED_EGLD_ERC20} ${WRAPPED_EGLD_TOKEN_ID} \
+    # --send --proxy=${PROXY} --chain=${CHAIN_ID}
 
-    sleep 10
+    # sleep 10
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
     --gas-limit=40000000 --function="addMapping" \
     --arguments ${WRAPPED_ETH_ERC20} ${WRAPPED_ETH_TOKEN_ID} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
-
+addMapping
 changeQuorum() {
     local NEW_QUORUM=0x02
+    local ERC20_ADDRESS=0x64a8bFAb8e7AC5D5A3561d95B504542E9E29CE24
 
     erdpy --verbose contract call ${ADDRESS} --recall-nonce --pem=${ALICE} \
     --gas-limit=40000000 --function="changeQuorum" \
     --arguments ${NEW_QUORUM} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
-
 # Issue Tokens
 
 issueWrappedEgld() {
@@ -193,7 +208,7 @@ setLocalRolesEsdtSafe() {
     --arguments ${WRAPPED_EGLD_TOKEN_ID} 0x${ADDRESS_HEX} ${LOCAL_BURN_ROLE} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 
-    sleep 10
+    sleep 30
 
     # set roles for WrappedEth
     erdpy --verbose contract call ${ESDT_SYSTEM_SC_ADDRESS} --recall-nonce --pem=${ALICE} \
@@ -214,7 +229,7 @@ setLocalRolesMultiTransferEsdt() {
     --arguments ${WRAPPED_EGLD_TOKEN_ID} 0x${ADDRESS_HEX} ${LOCAL_MINT_ROLE} \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 
-    sleep 10
+    sleep 30
 
     # set roles for WrappedEth
     erdpy --verbose contract call ${ESDT_SYSTEM_SC_ADDRESS} --recall-nonce --pem=${ALICE} \
@@ -333,7 +348,6 @@ getMultiTransferEsdtAddress() {
     MULTI_TRANSFER_ESDT_ADDRESS=${ADDRESS_BECH32}
     echo "MultiTransferEsdt address: ${MULTI_TRANSFER_ESDT_ADDRESS}"
 }
-
 getActionLastIndex() {
     local QUERY_OUTPUT=$(erdpy --verbose contract query ${ADDRESS} --function="getActionLastIndex" --proxy=${PROXY})
     parseQueryOutput
@@ -403,14 +417,14 @@ getWrappedEgldTokenIdentifier() {
     echo "Wrapped eGLD token identifier: ${TOKEN_IDENTIFIER}"
 }
 wrapEgldBob() {
-    erdpy --verbose contract call erd1qqqqqqqqqqqqqpgqmfjtewxwg5cr2uqzcsw8u75qdgclhtfkd8sstw8u24 --recall-nonce --pem=${BOB} \
+    erdpy --verbose contract call erd1qqqqqqqqqqqqqpgqzqsrkpnqcknyhz4k9zkn35anf7xfyc50d8ss0xl0lf --recall-nonce --pem=${BOB} \
     --gas-limit=10000000 --value=10000000000000000000 --function="wrapEgld" \
     --send --proxy=${PROXY} --chain=${CHAIN_ID}
 }
 createTransaction() {
     local CREATE_TRANSACTION_ENDPOINT=0x6372656174655472616e73616374696f6e # "createTransaction"
-    local DEST_ADDRESS=0x7f68b02deD630955893262742a69583ED3315E29
-    local VALUE=0x8AC7230489E80000
+    local DEST_ADDRESS=0x0717a10bF2A82A7793223De45DAb655134e84e07
+    local VALUE=0x0DE0B6B3A7640000
     getEsdtSafeAddress
     bech32ToHex ${ESDT_SAFE_ADDRESS}
      
